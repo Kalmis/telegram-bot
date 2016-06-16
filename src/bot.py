@@ -43,5 +43,4 @@ class YourBot(telepot.Bot):
 
         if command in self.menus:
             lunch = self.JSONParser.getAmicaSetMenuForDate(self.menus[command],datetime.datetime.now(),"Lounas")
-            print(lunch)
             self.sendMessage(chat_id, lunch, reply_to_message_id=msg_id)

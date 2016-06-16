@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 '''
 Created on 14.6.2016
 
@@ -40,4 +42,7 @@ class JSONParser(object):
 
         MenuForDay=self.getAmicaMenuForDay(json,date)
         SetMenu = self.getAmicaSetMenu(MenuForDay,SetMenuName)
-        return SetMenu['Components']
+        setMenuString = ""
+        for food in SetMenu['Components']:
+            setMenuString+=food+'\n'
+        return setMenuString
