@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 '''
 Created on 14.6.2016
 
@@ -9,6 +11,10 @@ import telepot
 import requests
 import json
 import configparser
+import pprint
+import datetime
+from jsonparser import JSONParser
+
 
 
 class YourBot(telepot.Bot):
@@ -16,6 +22,7 @@ class YourBot(telepot.Bot):
         super(YourBot, self).__init__(*args, **kwargs)
         self._answerer = telepot.helper.Answerer(self)
         self._message_with_inline_keyboard = None
+        self.JSONParser = JSONParser()
 
     def downloadMenus(self,config):
         self.menus = {}
@@ -24,7 +31,6 @@ class YourBot(telepot.Bot):
             if r.status_code == 200:
                 self.menus[option] = r.json()
 
-
     def on_chat_message(self, msg):
         content_type, chat_type, chat_id = telepot.glance(msg)
         print('Chat:', content_type, chat_type, chat_id)
@@ -32,8 +38,10 @@ class YourBot(telepot.Bot):
         if content_type != 'text':
             return
 
-        command = msg['text'][1:].lower()
+        command = msg['text'].split()[0][1:].lower()
         msg_id = msg['message_id']
 
         if command in self.menus:
-            self.sendMessage(chat_id, 'Tästä se alkaa', reply_to_message_id=msg_id)
+            lunch = self.JSONParser.getAmicaSetMenuForDate(self.menus[command],datetime.datetime.now(),"Lounas")
+            print(lunch)
+            self.sendMessage(chat_id, lunch, reply_to_message_id=msg_id)
