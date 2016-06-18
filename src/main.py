@@ -20,16 +20,16 @@ class Main(object):
     def __init__(self):
         self.config = configparser.ConfigParser()
         self.config.read(conf)
-        self.TOKEN = self.config['DEFAULTS']['Token']
+        TOKEN = self.config['DEFAULTS']['Token']
         print("Config read")
 
         # Create bot object, download menus set in config and start loop
-        self.bot = YourBot(self.TOKEN)
+        self.bot = YourBot(TOKEN)
         self.downloadMenus()
-        self.bot.message_loop()
+        self.bot.message_loop(self.bot.on_message)
 
         # Download menus every 6 hours to keep them up to date
-        schedule.every(6).hour.do(self.downloadMenus)
+        schedule.every(6).hours.do(self.downloadMenus)
         print('Started')
 
         while 1:
@@ -37,7 +37,8 @@ class Main(object):
             time.sleep(10)
 
     def downloadMenus(self):
-        self.bot.downloadMenus(self.config)
+        self.bot.downloadSodexoMenus(self.config)
+        self.bot.downloadAmicaMenus(self.config)
 
 if __name__ == '__main__':
     Main()
