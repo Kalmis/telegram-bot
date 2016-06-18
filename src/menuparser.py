@@ -30,7 +30,7 @@ class menuParser(object):
             MenuDate = parse(day['Date'])
             if date.date() == MenuDate.date():
                 return day
-        return 0
+        return {'SetMenus': []}
 
     @staticmethod
     def getAmicaMenuNamesForDate(dict, date):
@@ -47,7 +47,7 @@ class menuParser(object):
         for SetMenu in MenuForDay['SetMenus']:
             if SetMenu['Name'].lower() == menuName.lower():
                 return SetMenu
-        return 0
+        return {'Components': ""}
 
     @staticmethod
     def getAmicaSetMenuForDate(dict, date, SetMenuName):
@@ -65,5 +65,19 @@ class menuParser(object):
         setMenuNames = menuParser.getAmicaMenuNamesForDate(dict, date)
         returnText = ""
         for name in setMenuNames:
-            returnText += name + '\n' + menuParser.getAmicaSetMenu(dict, date, name)
+            food = menuParser.getAmicaSetMenu(dict, date, name)
+            returnText += "{!s}\n {!s}".format(name, food)
+        return returnText
+
+    @staticmethod
+    def getSodexoFullMenu(dict):
+        '''Get all foods of given dict'''
+        returnText = ""
+        for course in dict['courses']:
+            food = course['title_fi']
+            try:
+                allergens = course['properties']
+            except KeyError:
+                allergens = ""
+            returnText += "{!s} ({!s})\n".format(food, allergens)
         return returnText
