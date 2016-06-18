@@ -10,7 +10,6 @@ Created on 14.6.2016
 import telepot
 import requests
 import datetime
-import pprint
 from furl import furl  # For manipulating sodexo urls
 from menuparser import menuParser
 
@@ -31,8 +30,7 @@ class YourBot(telepot.Bot):
 
     def downloadSodexoMenus(self, config):
         self.sodexoMenus = {}
-        #today = datetime.datetime.now().date()
-        today = datetime.date(2016,6,17)
+        today = datetime.datetime.now().date()
         for option in config.options('SODEXO'):
             url = furl(config.get('SODEXO', option))
             url.path.segments[4] = str(today.year)
@@ -51,13 +49,21 @@ class YourBot(telepot.Bot):
 
         query = msg['text'].split()
         # Commands may be in form /rafla or /rafla@botname
-        command=query[0].split('@')[0][1:].lower()
+        command = query[0].split('@')[0][1:].lower()
 
         msg_id = msg['message_id']
 
         if command in self.amicaMenus:
             today = datetime.datetime.now()
             fullMenu = menuParser.getAmicaFullMenuForDate(self.amicaMenus[command], today)
+            if len(fullMenu) > 0:
+                reply = fullMenu
+            else:
+                reply = "Ei listaa tälle päivälle"
+            self.sendMessage(chat_id, reply, reply_to_message_id=msg_id)
+
+        elif command in self.sodexoMenus:
+            fullMenu = menuParser.getSodexoFullMenu(self.sodexoMenus[command])
             if len(fullMenu) > 0:
                 reply = fullMenu
             else:
