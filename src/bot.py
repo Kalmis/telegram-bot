@@ -53,7 +53,16 @@ class YourBot(telepot.Bot):
 
         msg_id = msg['message_id']
 
-        if command in self.amicaMenus:
+        if command == 'help':
+            reply = ""
+            reply += "Menu of restaurant:\n"
+            restaurants = list(self.amicaMenus) + list(self.sodexoMenus)
+            restaurants.sort()
+            for restaurant in restaurants:
+                reply += "/{!s}\n".format(restaurant)
+            self.sendMessage(chat_id, reply, reply_to_message_id=msg_id)
+
+        elif command in self.amicaMenus:
             today = datetime.datetime.now()
             fullMenu = menuParser.getAmicaFullMenuForDate(self.amicaMenus[command], today)
             if len(fullMenu) > 0:
