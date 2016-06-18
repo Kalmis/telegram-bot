@@ -10,7 +10,9 @@ Created on 14.6.2016
 import telepot
 import requests
 import datetime
-from jsonparser import JSONParser
+import pprint
+from furl import furl  # For manipulating sodexo urls
+from menuparser import menuParser
 
 
 class YourBot(telepot.Bot):
@@ -19,27 +21,43 @@ class YourBot(telepot.Bot):
         super(YourBot, self).__init__(*args, **kwargs)
         self._answerer = telepot.helper.Answerer(self)
         self._message_with_inline_keyboard = None
-        self.JSONParser = JSONParser()
 
-    def downloadMenus(self, config):
-        self.menus = {}
-        for option in config.options('RESTAURANTS'):
-            r = requests.get(config.get('RESTAURANTS', option))
+    def downloadAmicaMenus(self, config):
+        self.amicaMenus = {}
+        for option in config.options('AMICA'):
+            r = requests.get(config.get('AMICA', option))
             if r.status_code == 200:
-                self.menus[option] = r.json()
+                self.amicaMenus[option] = r.json()
 
-    def on_chat_message(self, msg):
+    def downloadSodexoMenus(self, config):
+        self.sodexoMenus = {}
+        #today = datetime.datetime.now().date()
+        today = datetime.date(2016,6,17)
+        for option in config.options('SODEXO'):
+            url = furl(config.get('SODEXO', option))
+            url.path.segments[4] = str(today.year)
+            url.path.segments[5] = str(today.month)
+            url.path.segments[6] = str(today.day)
+            r = requests.get(url.url)
+            if r.status_code == 200:
+                self.sodexoMenus[option] = r.json()
+
+    def on_message(self, msg):
         content_type, chat_type, chat_id = telepot.glance(msg)
         print('Chat:', content_type, chat_type, chat_id)
 
         if content_type != 'text':
             return
-        command = msg['text'].split()[0][1:].lower()
+
+        query = msg['text'].split()
+        # Commands may be in form /rafla or /rafla@botname
+        command=query[0].split('@')[0][1:].lower()
+
         msg_id = msg['message_id']
 
-        if command in self.menus:
+        if command in self.amicaMenus:
             today = datetime.datetime.now()
-            fullMenu = self.JSONParser.getAmicaFullMenuForDate(self.menus[command], today)
+            fullMenu = menuParser.getAmicaFullMenuForDate(self.amicaMenus[command], today)
             if len(fullMenu) > 0:
                 reply = fullMenu
             else:
