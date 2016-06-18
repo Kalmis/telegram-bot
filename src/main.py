@@ -6,14 +6,12 @@ Created on 17.5.2016
 @author: Kalmis
 '''
 
-conf = 'bot.conf'
-
-import telepot
-import requests
-import json
 import configparser
 import time
 from bot import YourBot
+import schedule
+conf = 'bot.conf'
+
 
 class Main(object):
     '''
@@ -24,14 +22,22 @@ class Main(object):
         self.config.read(conf)
         self.TOKEN = self.config['DEFAULTS']['Token']
         print("Config read")
+
+        # Create bot object, download menus set in config and start loop
         self.bot = YourBot(self.TOKEN)
-        self.bot.downloadMenus(self.config)
+        self.downloadMenus()
         self.bot.message_loop()
+
+        # Download menus every 6 hours to keep them up to date
+        schedule.every(6).hour.do(self.downloadMenus)
         print('Started')
 
         while 1:
+            schedule.run_pending()
             time.sleep(10)
 
+    def downloadMenus(self):
+        self.bot.downloadMenus(self.config)
 
 if __name__ == '__main__':
     Main()
