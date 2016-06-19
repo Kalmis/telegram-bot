@@ -12,6 +12,8 @@ import requests
 import datetime
 from furl import furl  # For manipulating sodexo urls
 from menuparser import menuParser
+import configparser
+
 
 
 class YourBot(telepot.Bot):
@@ -21,18 +23,24 @@ class YourBot(telepot.Bot):
         self._answerer = telepot.helper.Answerer(self)
         self._message_with_inline_keyboard = None
 
-    def downloadAmicaMenus(self, config):
+    def readConfigs(self,config):
+        self.config  = configparser.ConfigParser()
+        self.config.read(config)
+        print("Config read")
+
+
+    def downloadAmicaMenus(self):
         self.amicaMenus = {}
-        for option in config.options('AMICA'):
-            r = requests.get(config.get('AMICA', option))
+        for option in self.config.options('AMICA'):
+            r = requests.get(self.config.get('AMICA', option))
             if r.status_code == 200:
                 self.amicaMenus[option] = r.json()
 
-    def downloadSodexoMenus(self, config):
+    def downloadSodexoMenus(self):
         self.sodexoMenus = {}
         today = datetime.datetime.now().date()
-        for option in config.options('SODEXO'):
-            url = furl(config.get('SODEXO', option))
+        for option in self.config.options('SODEXO'):
+            url = furl(self.config.get('SODEXO', option))
             url.path.segments[4] = str(today.year)
             url.path.segments[5] = str(today.month)
             url.path.segments[6] = str(today.day)
