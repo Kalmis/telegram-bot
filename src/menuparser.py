@@ -88,6 +88,8 @@ class menuParser(object):
 
     @staticmethod
     def parseTaffaTodaysMenu(html):
+        '''Parse today's menu from Täffä's html page. Today's menu is stored in
+        sodexo like dict structure, so same get function may be used '''
         menu = {}
 
         soup = BeautifulSoup(html, 'html.parser')

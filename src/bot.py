@@ -24,11 +24,14 @@ class YourBot(telepot.Bot):
         self._message_with_inline_keyboard = None
 
     def readConfigs(self, config):
+        '''Reads configs from given file to memory'''
         self.config = configparser.ConfigParser()
         self.config.read(config)
         print("Config read")
 
     def downloadAmicaMenus(self):
+        '''Downloads amica menus that are set in config under [AMICA], decodes JSON to
+        dict and stores dicts in dict where option's name is the key'''
         categoryName = "AMICA"
         self.amicaMenus = {}
         for option in self.config.options(categoryName):
@@ -37,6 +40,8 @@ class YourBot(telepot.Bot):
                 self.amicaMenus[option] = r.json()
 
     def downloadSodexoMenus(self):
+        '''Downloads sodexo menus that are set in config under [AMICA], decodes json to
+        dict and stores dicts in dict where option's name is the key'''
         categoryName = "SODEXO"
         self.sodexoMenus = {}
         today = datetime.datetime.now().date()
@@ -50,6 +55,8 @@ class YourBot(telepot.Bot):
                 self.sodexoMenus[option] = r.json()
 
     def downloadTaffaMenu(self):
+        '''Downloads Täffä's todays menu from their website and stores it in same
+        dict structure as Sodexo menus'''
         categoryName = "TAFFA"
         self.taffaMenu = {}
         for option in self.config.options(categoryName):
@@ -61,6 +68,7 @@ class YourBot(telepot.Bot):
                 self.taffaMenu[option] = menu
 
     def on_message(self, msg):
+        '''On every message this method is called. All command's logic are here'''
         content_type, chat_type, chat_id = telepot.glance(msg)
         print('Chat:', content_type, chat_type, chat_id)
 
