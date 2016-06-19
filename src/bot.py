@@ -87,7 +87,7 @@ class YourBot(telepot.Bot):
             today = datetime.datetime.now()
             fullMenu = menuParser.getAmicaFullMenuForDate(self.amicaMenus[command], today)
             if len(fullMenu) > 0:
-                reply = "{!s}".format(today.strftime("%A %d.%m.%Y"))
+                reply = "{!s}\n".format(today.strftime("%A %d.%m.%Y"))
                 reply += fullMenu
             else:
                 reply = "Ei listaa tälle päivälle"

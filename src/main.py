@@ -38,6 +38,7 @@ class Main(object):
 
     def downloadMenus(self):
         self.bot.downloadSodexoMenus()
+        self.bot.downloadTaffaMenu()
         self.bot.downloadAmicaMenus()
 
 if __name__ == '__main__':

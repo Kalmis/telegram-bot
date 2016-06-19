@@ -67,8 +67,8 @@ class menuParser(object):
         setMenuNames = menuParser.getAmicaMenuNamesForDate(dict, date)
         returnText = ""
         for name in setMenuNames:
-            food = menuParser.getAmicaSetMenu(dict, date, name)
-            returnText += "{!s}\n {!s}".format(name, food)
+            food = menuParser.getAmicaSetMenuForDate(dict, date, name)
+            returnText += "\n{!s}\n {!s}".format(name, food)
         return returnText
 
     @staticmethod
@@ -83,7 +83,7 @@ class menuParser(object):
                 allergens = course['properties']
             except KeyError:
                 allergens = ""
-            returnText += "{!s} ({!s})\n".format(food, allergens)
+            returnText += "{!s} {!s}\n".format(food, allergens)
         return returnText
 
     @staticmethod
