@@ -14,8 +14,6 @@ from furl import furl  # For manipulating sodexo urls
 from menuparser import menuParser
 import configparser
 from bs4 import BeautifulSoup
-from dateutil.parser import parse
-import pprint
 
 
 class YourBot(telepot.Bot):
@@ -51,21 +49,25 @@ class YourBot(telepot.Bot):
             if r.status_code == 200:
                 self.sodexoMenus[option] = r.json()
 
-    def downloadTaffaMenus(self):
+    def downloadTaffaMenu(self):
         categoryName = "TAFFA"
         self.taffaMenu = {}
         for option in self.config.options(categoryName):
             r = requests.get(self.config.get(categoryName, option))
             if r.status_code == 200:
+                menu = {}
                 soup = BeautifulSoup(r.text, 'html.parser')
                 temp = {"class": "todays-menu"}
                 todays_menu = soup.find(attrs=temp)
                 courses = []
                 for li in todays_menu.ul.children:
                     if li.name == "li":
-                        temp = {"title_fi": li.contents[0]}
+                        # The page's encoding isn't utf-8 after all...
+                        content = str(li.contents[0]).encode('latin-1').decode('utf-8')
+                        temp = {"title_fi": content}
                         courses.append(temp)
-                self.taffaMenu['courses'] = courses
+                menu['courses'] = courses
+                self.taffaMenu[option] = menu
 
     def on_message(self, msg):
         content_type, chat_type, chat_id = telepot.glance(msg)
@@ -83,7 +85,8 @@ class YourBot(telepot.Bot):
         if command == 'help':
             reply = ""
             reply += "Menu of restaurant:\n"
-            restaurants = list(self.amicaMenus) + list(self.sodexoMenus)
+            restaurants = list(self.amicaMenus) + list(self.sodexoMenus) + \
+                         list(self.taffaMenu)
             restaurants.sort()
             for restaurant in restaurants:
                 reply += "/{!s}\n".format(restaurant)
@@ -100,6 +103,14 @@ class YourBot(telepot.Bot):
 
         elif command in self.sodexoMenus:
             fullMenu = menuParser.getSodexoFullMenu(self.sodexoMenus[command])
+            if len(fullMenu) > 0:
+                reply = fullMenu
+            else:
+                reply = "Ei listaa tälle päivälle"
+            self.sendMessage(chat_id, reply, reply_to_message_id=msg_id)
+
+        elif command in self.taffaMenu:
+            fullMenu = menuParser.getSodexoFullMenu(self.taffaMenu[command])
             if len(fullMenu) > 0:
                 reply = fullMenu
             else:
