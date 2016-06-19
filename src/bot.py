@@ -13,7 +13,9 @@ import datetime
 from furl import furl  # For manipulating sodexo urls
 from menuparser import menuParser
 import configparser
-
+from bs4 import BeautifulSoup
+from dateutil.parser import parse
+import pprint
 
 
 class YourBot(telepot.Bot):
@@ -23,30 +25,55 @@ class YourBot(telepot.Bot):
         self._answerer = telepot.helper.Answerer(self)
         self._message_with_inline_keyboard = None
 
-    def readConfigs(self,config):
-        self.config  = configparser.ConfigParser()
+    def readConfigs(self, config):
+        self.config = configparser.ConfigParser()
         self.config.read(config)
         print("Config read")
 
-
     def downloadAmicaMenus(self):
+        categoryName = "AMICA"
         self.amicaMenus = {}
-        for option in self.config.options('AMICA'):
-            r = requests.get(self.config.get('AMICA', option))
+        for option in self.config.options(categoryName):
+            r = requests.get(self.config.get(categoryName, option))
             if r.status_code == 200:
                 self.amicaMenus[option] = r.json()
 
     def downloadSodexoMenus(self):
+        categoryName = "SODEXO"
         self.sodexoMenus = {}
         today = datetime.datetime.now().date()
-        for option in self.config.options('SODEXO'):
-            url = furl(self.config.get('SODEXO', option))
+        for option in self.config.options(categoryName):
+            url = furl(self.config.get(categoryName, option))
             url.path.segments[4] = str(today.year)
             url.path.segments[5] = str(today.month)
             url.path.segments[6] = str(today.day)
             r = requests.get(url.url)
             if r.status_code == 200:
                 self.sodexoMenus[option] = r.json()
+
+    def downloadTaffaMenus(self):
+        categoryName = "TAFFA"
+        self.taffaMenus = []
+        for option in self.config.options(categoryName):
+            r = requests.get(self.config.get(categoryName, option))
+            if r.status_code == 200:
+                soup = BeautifulSoup(r.text, 'html.parser')
+                temp = {"class": "todays-menu"}
+                todays_menu = soup.find(attrs=temp)
+                for child in todays_menu.children:
+                    print(child.name)
+                    if child.name == "p":
+                        date = child.contents[0].split()[1]
+                        menuForDay = {"Date": date}
+                    elif child.name == "ul":
+                        courses = []
+                        for li in child.children:
+                            if li.name == "li":
+                                courses.append(li.contents[0])
+                        menuForDay["Courses"]= courses
+                        self.taffaMenus.append(menuForDay)
+        pprint.pprint(self.taffaMenus)
+
 
     def on_message(self, msg):
         content_type, chat_type, chat_id = telepot.glance(msg)
