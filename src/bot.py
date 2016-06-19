@@ -59,7 +59,6 @@ class YourBot(telepot.Bot):
                 menu['meta']['ref_title'] = "Täffä"
                 menu['meta']['ref_url'] = self.config.get(categoryName, option)
                 self.taffaMenu[option] = menu
-                #pprint.pprint(menu)
 
     def on_message(self, msg):
         content_type, chat_type, chat_id = telepot.glance(msg)
@@ -78,7 +77,7 @@ class YourBot(telepot.Bot):
             reply = ""
             reply += "Menu of restaurant:\n"
             restaurants = list(self.amicaMenus) + list(self.sodexoMenus) + \
-                         list(self.taffaMenu)
+                list(self.taffaMenu)
             restaurants.sort()
             for restaurant in restaurants:
                 reply += "/{!s}\n".format(restaurant)
@@ -88,7 +87,8 @@ class YourBot(telepot.Bot):
             today = datetime.datetime.now()
             fullMenu = menuParser.getAmicaFullMenuForDate(self.amicaMenus[command], today)
             if len(fullMenu) > 0:
-                reply = fullMenu
+                reply = "{!s}".format(today.strftime("%A %d.%m.%Y"))
+                reply += fullMenu
             else:
                 reply = "Ei listaa tälle päivälle"
             self.sendMessage(chat_id, reply, reply_to_message_id=msg_id)
