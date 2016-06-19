@@ -13,7 +13,6 @@ import datetime
 from furl import furl  # For manipulating sodexo urls
 from menuparser import menuParser
 import configparser
-from bs4 import BeautifulSoup
 
 
 class YourBot(telepot.Bot):
@@ -55,18 +54,7 @@ class YourBot(telepot.Bot):
         for option in self.config.options(categoryName):
             r = requests.get(self.config.get(categoryName, option))
             if r.status_code == 200:
-                menu = {}
-                soup = BeautifulSoup(r.text, 'html.parser')
-                temp = {"class": "todays-menu"}
-                todays_menu = soup.find(attrs=temp)
-                courses = []
-                for li in todays_menu.ul.children:
-                    if li.name == "li":
-                        # The page's encoding isn't utf-8 after all...
-                        content = str(li.contents[0]).encode('latin-1').decode('utf-8')
-                        temp = {"title_fi": content}
-                        courses.append(temp)
-                menu['courses'] = courses
+                menu = menuParser.parseTaffaTodaysMenu(r.text)
                 self.taffaMenu[option] = menu
 
     def on_message(self, msg):
