@@ -7,6 +7,7 @@ Created on 14.6.2016
 '''
 
 from dateutil.parser import parse
+from bs4 import BeautifulSoup
 
 
 class menuParser(object):
@@ -81,3 +82,20 @@ class menuParser(object):
                 allergens = ""
             returnText += "{!s} ({!s})\n".format(food, allergens)
         return returnText
+
+    @staticmethod
+    def parseTaffaTodaysMenu(html):
+        menu = {}
+        soup = BeautifulSoup(html, 'html.parser')
+        temp = {"class": "todays-menu"}
+        todays_menu = soup.find(attrs=temp)
+        courses = []
+        for li in todays_menu.ul.children:
+            if li.name == "li":
+                # The page's encoding isn't utf-8 after all...
+                content = str(li.contents[0]).encode('latin-1').decode('utf-8')
+                temp = {"title_fi": content}
+                courses.append(temp)
+        menu['courses'] = courses
+        return menu
+
