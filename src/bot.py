@@ -13,6 +13,7 @@ import datetime
 from furl import furl  # For manipulating sodexo urls
 from menuparser import menuParser
 import configparser
+import pprint
 
 
 class YourBot(telepot.Bot):
@@ -55,7 +56,10 @@ class YourBot(telepot.Bot):
             r = requests.get(self.config.get(categoryName, option))
             if r.status_code == 200:
                 menu = menuParser.parseTaffaTodaysMenu(r.text)
+                menu['meta']['ref_title'] = "Täffä"
+                menu['meta']['ref_url'] = self.config.get(categoryName, option)
                 self.taffaMenu[option] = menu
+                #pprint.pprint(menu)
 
     def on_message(self, msg):
         content_type, chat_type, chat_id = telepot.glance(msg)

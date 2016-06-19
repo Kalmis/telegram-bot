@@ -8,6 +8,7 @@ Created on 14.6.2016
 
 from dateutil.parser import parse
 from bs4 import BeautifulSoup
+from datetime import datetime
 
 
 class menuParser(object):
@@ -74,6 +75,8 @@ class menuParser(object):
     def getSodexoFullMenu(dict):
         '''Get all foods of given dict'''
         returnText = ""
+        date = datetime.fromtimestamp(float(dict['meta']['requested_timestamp']))
+        returnText += "{!s}\n".format(date.strftime("%A %d.%m.%Y"))
         for course in dict['courses']:
             food = course['title_fi']
             try:
@@ -86,9 +89,13 @@ class menuParser(object):
     @staticmethod
     def parseTaffaTodaysMenu(html):
         menu = {}
+
         soup = BeautifulSoup(html, 'html.parser')
         temp = {"class": "todays-menu"}
         todays_menu = soup.find(attrs=temp)
+
+        date = parse(todays_menu.p.contents[0].split()[-1])
+        meta = {"requested_timestamp": str(date.timestamp())}
         courses = []
         for li in todays_menu.ul.children:
             if li.name == "li":
@@ -97,5 +104,5 @@ class menuParser(object):
                 temp = {"title_fi": content}
                 courses.append(temp)
         menu['courses'] = courses
+        menu['meta'] = meta
         return menu
-
