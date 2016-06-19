@@ -10,17 +10,18 @@ import configparser
 import time
 from bot import YourBot
 import schedule
-conf = 'bot.conf'
 
+conf = 'bot.conf'
+tokenconf = 'tokens.conf'
 
 class Main(object):
     '''
     Main program that uses the Bot class
     '''
     def __init__(self):
-        config = configparser.ConfigParser()
-        config.read(conf)
-        TOKEN = config['DEFAULTS']['Token']
+        tokens = configparser.ConfigParser()
+        tokens.read(tokenconf)
+        TOKEN = tokens['TELEGRAM']['Token']
 
         # Create bot object, download menus set in config and start loop
         self.bot = YourBot(TOKEN)
