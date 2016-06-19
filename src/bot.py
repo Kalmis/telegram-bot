@@ -53,27 +53,19 @@ class YourBot(telepot.Bot):
 
     def downloadTaffaMenus(self):
         categoryName = "TAFFA"
-        self.taffaMenus = []
+        self.taffaMenu = {}
         for option in self.config.options(categoryName):
             r = requests.get(self.config.get(categoryName, option))
             if r.status_code == 200:
                 soup = BeautifulSoup(r.text, 'html.parser')
                 temp = {"class": "todays-menu"}
                 todays_menu = soup.find(attrs=temp)
-                for child in todays_menu.children:
-                    print(child.name)
-                    if child.name == "p":
-                        date = child.contents[0].split()[1]
-                        menuForDay = {"Date": date}
-                    elif child.name == "ul":
-                        courses = []
-                        for li in child.children:
-                            if li.name == "li":
-                                courses.append(li.contents[0])
-                        menuForDay["Courses"]= courses
-                        self.taffaMenus.append(menuForDay)
-        pprint.pprint(self.taffaMenus)
-
+                courses = []
+                for li in todays_menu.ul.children:
+                    if li.name == "li":
+                        temp = {"title_fi": li.contents[0]}
+                        courses.append(temp)
+                self.taffaMenu['courses'] = courses
 
     def on_message(self, msg):
         content_type, chat_type, chat_id = telepot.glance(msg)
