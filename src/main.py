@@ -18,13 +18,13 @@ class Main(object):
     Main program that uses the Bot class
     '''
     def __init__(self):
-        self.config = configparser.ConfigParser()
-        self.config.read(conf)
-        TOKEN = self.config['DEFAULTS']['Token']
-        print("Config read")
+        config = configparser.ConfigParser()
+        config.read(conf)
+        TOKEN = config['DEFAULTS']['Token']
 
         # Create bot object, download menus set in config and start loop
         self.bot = YourBot(TOKEN)
+        self.bot.readConfigs(conf)
         self.downloadMenus()
         self.bot.message_loop(self.bot.on_message)
 
@@ -37,8 +37,8 @@ class Main(object):
             time.sleep(10)
 
     def downloadMenus(self):
-        self.bot.downloadSodexoMenus(self.config)
-        self.bot.downloadAmicaMenus(self.config)
+        self.bot.downloadSodexoMenus()
+        self.bot.downloadAmicaMenus()
 
 if __name__ == '__main__':
     Main()
