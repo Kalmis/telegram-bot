@@ -27,6 +27,7 @@ class Main(object):
         # Create bot object, download menus set in config and start loop
         self.bot = YourBot(TOKEN)
         self.bot.readConfigs(conf)
+        self.bot.initGeopyGoogle(tokens['GOOGLE']['Token'])
         self.downloadMenus()
         self.bot.message_loop(self.bot.on_message)
 

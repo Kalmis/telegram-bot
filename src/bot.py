@@ -15,6 +15,8 @@ from menuparser import menuParser
 import configparser
 #import pprint
 import feedparser
+import geopy
+import pytz
 
 
 class YourBot(telepot.Bot):
@@ -29,6 +31,10 @@ class YourBot(telepot.Bot):
         self.config = configparser.ConfigParser()
         self.config.read(config)
         print("Config read")
+
+    def initGeopyGoogle(self,TOKEN):
+        self.GOOGLETOKEN = TOKEN
+        self.geopyGoogle = geopy.geocoders.GoogleV3(self.GOOGLETOKEN,"maps.google.fi")
 
     def downloadAmicaMenus(self):
         '''Downloads amica menus that are set in config under [AMICA], decodes JSON to
@@ -77,6 +83,38 @@ class YourBot(telepot.Bot):
                 menu['meta']['ref_title'] = "Täffä"
                 menu['meta']['ref_url'] = self.config.get(categoryName, option)
                 self.taffaMenu[option] = menu
+
+    def getLocalTimeForLocationName(self,locationName):
+        if locationName in self.config['LOCATIONNAMES']:
+            locationName = self.config['LOCATIONNAMES'][locationName]
+
+        returnText = ""
+        location = self.geopyGoogle.geocode(locationName)
+        if location is None:
+            return None
+        returnText += "{!s}\n".format(location.address)
+        timeZoneId = self.getTimezoneIdForLocation(location)
+        if timeZoneId is None:
+            return None
+        localTime = datetime.datetime.now(pytz.timezone(timeZoneId))
+        returnText += localTime.strftime("%H:%M %z %Z %d.%m.%Y ")
+        return returnText
+
+    def getTimezoneIdForLocation(self,location):
+        url ="https://maps.googleapis.com/maps/api/timezone/json?location="
+        url += "{!s}".format(location.latitude)
+        url += ","
+        url += "{!s}".format(location.longitude)
+        url += "&timestamp="
+        url += "{!s}".format(int(datetime.datetime.now().timestamp()))
+        url += "&key="
+        url += "{!s}".format(self.GOOGLETOKEN)
+
+        r = requests.get(url)
+        if r.status_code == 200:
+            return r.json()['timeZoneId']
+
+
 
     def on_message(self, msg):
         '''On every message this method is called. All command's logic are here'''
