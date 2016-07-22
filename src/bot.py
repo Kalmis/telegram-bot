@@ -84,7 +84,7 @@ class YourBot(telepot.Bot):
                 menu['meta']['ref_url'] = self.config.get(categoryName, option)
                 self.taffaMenu[option] = menu
 
-    def getLocalTimeForLocationName(self,locationName):
+    def getLocalTimeForLocationName(self, locationName):
         if locationName in self.config['LOCATIONNAMES']:
             locationName = self.config['LOCATIONNAMES'][locationName]
 
@@ -100,8 +100,8 @@ class YourBot(telepot.Bot):
         returnText += localTime.strftime("%H:%M %z %Z %d.%m.%Y ")
         return returnText
 
-    def getTimezoneIdForLocation(self,location):
-        url ="https://maps.googleapis.com/maps/api/timezone/json?location="
+    def getTimezoneIdForLocation(self, location):
+        url = "https://maps.googleapis.com/maps/api/timezone/json?location="
         url += "{!s}".format(location.latitude)
         url += ","
         url += "{!s}".format(location.longitude)
@@ -113,8 +113,6 @@ class YourBot(telepot.Bot):
         r = requests.get(url)
         if r.status_code == 200:
             return r.json()['timeZoneId']
-
-
 
     def on_message(self, msg):
         '''On every message this method is called. All command's logic are here'''
@@ -132,6 +130,7 @@ class YourBot(telepot.Bot):
 
         if command == 'help':
             reply = ""
+            reply += "/time Local time of given location (address, city etc.)"
             reply += "Menu of restaurant:\n"
             restaurants = list(self.amicaMenus) + list(self.sodexoMenus) + \
                 list(self.taffaMenu)
@@ -175,3 +174,11 @@ class YourBot(telepot.Bot):
             else:
                 reply = "Ei listaa tälle päivälle"
             self.sendMessage(chat_id, reply, reply_to_message_id=msg_id)
+
+        elif command == 'time':
+            if len(query) < 2:
+                reply = "Anna sijainti"
+            else:
+                reply = self.getLocalTimeForLocationName(' '.join(query[1:]))
+            self.sendMessage(chat_id, reply, reply_to_message_id=msg_id)
+
