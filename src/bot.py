@@ -127,3 +127,13 @@ class YourBot(telepot.Bot):
             else:
                 reply = "Ei listaa tälle päivälle"
             self.sendMessage(chat_id, reply, reply_to_message_id=msg_id)
+
+        elif command in self.HYYMenus:
+            today = datetime.datetime.now()
+            fullMenu = menuParser.getHYYFullMenuForDate(self.HYYMenus[command], today)
+            if len(fullMenu) > 0:
+                reply = "{!s}\n".format(today.strftime("%A %d.%m.%Y"))
+                reply += fullMenu
+            else:
+                reply = "Ei listaa tälle päivälle"
+            self.sendMessage(chat_id, reply, reply_to_message_id=msg_id)

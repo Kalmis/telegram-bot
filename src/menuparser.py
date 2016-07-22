@@ -108,3 +108,15 @@ class menuParser(object):
         menu['courses'] = courses
         menu['meta'] = meta
         return menu
+
+    @staticmethod
+    def getHYYFullMenuForDate(dict,date):
+        '''Get whole menu for given day'''
+        weekDayNumber = int(date.strftime("%w")) - 1 # Sunday is 0
+        # In dict the entries are 0 = monday, 6 = Sunday
+        if weekDayNumber == -1:
+            weekDayNumber=6
+        returnText = ""
+        if (len(dict.entries) == 7):
+            returnText += dict.entries[weekDayNumber]['summary_detail']['value']
+        return returnText
