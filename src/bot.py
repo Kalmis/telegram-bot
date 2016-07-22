@@ -13,7 +13,7 @@ import datetime
 from furl import furl  # For manipulating sodexo urls
 from menuparser import menuParser
 import configparser
-import pprint
+#import pprint
 import feedparser
 
 

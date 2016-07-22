@@ -14,6 +14,7 @@ import schedule
 conf = 'bot.conf'
 tokenconf = 'tokens.conf'
 
+
 class Main(object):
     '''
     Main program that uses the Bot class
