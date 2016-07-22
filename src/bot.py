@@ -14,6 +14,7 @@ from furl import furl  # For manipulating sodexo urls
 from menuparser import menuParser
 import configparser
 import pprint
+import feedparser
 
 
 class YourBot(telepot.Bot):
@@ -53,6 +54,16 @@ class YourBot(telepot.Bot):
             r = requests.get(url.url)
             if r.status_code == 200:
                 self.sodexoMenus[option] = r.json()
+
+    def downloadHYYMenus(self):
+        '''Downloads HYY menus that are set in config under [HYY], decodes RSS to
+        dict and stores dicts in dict where option's name is the key'''
+        categoryName = "HYY"
+        self.HYYMenus = {}
+        for option in self.config.options(categoryName):
+            r = feedparser.parse(self.config.get(categoryName, option))
+            if not r.bozo:
+                self.HYYMenus[option] = r
 
     def downloadTaffaMenu(self):
         '''Downloads Täffä's todays menu from their website and stores it in same
