@@ -117,7 +117,6 @@ class YourBot(telepot.Bot):
     def on_message(self, msg):
         '''On every message this method is called. All command's logic are here'''
         content_type, chat_type, chat_id = telepot.glance(msg)
-        print('Chat:', content_type, chat_type, chat_id)
 
         if content_type != 'text':
             return
@@ -127,13 +126,14 @@ class YourBot(telepot.Bot):
         command = query[0].split('@')[0][1:].lower()
 
         msg_id = msg['message_id']
+        print('Chat:', content_type, chat_type, chat_id, msg['text'])
 
         if command == 'help':
             reply = ""
-            reply += "/time Local time of given location (address, city etc.)"
+            reply += "/time Local time of given location (address, city etc.)\n"
             reply += "Menu of restaurant:\n"
             restaurants = list(self.amicaMenus) + list(self.sodexoMenus) + \
-                list(self.taffaMenu)
+                list(self.taffaMenu) + list(self.HYYMenus)
             restaurants.sort()
             for restaurant in restaurants:
                 reply += "/{!s}\n".format(restaurant)
@@ -181,4 +181,3 @@ class YourBot(telepot.Bot):
             else:
                 reply = self.getLocalTimeForLocationName(' '.join(query[1:]))
             self.sendMessage(chat_id, reply, reply_to_message_id=msg_id)
-
