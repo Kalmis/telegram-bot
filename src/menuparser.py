@@ -75,15 +75,16 @@ class menuParser(object):
     def getSodexoFullMenu(dict):
         '''Get all foods of given dict'''
         returnText = ""
-        date = datetime.fromtimestamp(float(dict['meta']['requested_timestamp']))
-        returnText += "{!s}\n".format(date.strftime("%A %d.%m.%Y"))
-        for course in dict['courses']:
-            food = course['title_fi']
-            try:
-                allergens = course['properties']
-            except KeyError:
-                allergens = ""
-            returnText += "{!s} {!s}\n".format(food, allergens)
+        if len(dict['meta']) > 0:
+            date = datetime.fromtimestamp(float(dict['meta']['requested_timestamp']))
+            returnText += "{!s}\n".format(date.strftime("%A %d.%m.%Y"))
+            for course in dict['courses']:
+                food = course['title_fi']
+                try:
+                    allergens = course['properties']
+                except KeyError:
+                    allergens = ""
+                returnText += "{!s} {!s}\n".format(food, allergens)
         return returnText
 
     @staticmethod

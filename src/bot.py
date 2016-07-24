@@ -32,9 +32,9 @@ class YourBot(telepot.Bot):
         self.config.read(config)
         print("Config read")
 
-    def initGeopyGoogle(self,TOKEN):
+    def initGeopyGoogle(self, TOKEN):
         self.GOOGLETOKEN = TOKEN
-        self.geopyGoogle = geopy.geocoders.GoogleV3(self.GOOGLETOKEN,"maps.google.fi")
+        self.geopyGoogle = geopy.geocoders.GoogleV3(self.GOOGLETOKEN, "maps.google.fi")
 
     def downloadAmicaMenus(self):
         '''Downloads amica menus that are set in config under [AMICA], decodes JSON to
