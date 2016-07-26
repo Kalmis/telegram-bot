@@ -186,4 +186,4 @@ class YourBot(telepot.Bot):
 
         elif command == 'pokemon':
             reply = pokemon.getTodaysPokemon()
-            self.sendMessage(chat_id, reply, reply_to_message_id=msg_id)
+            self.sendMessage(chat_id, reply, reply_to_message_id=msg_id, disable_web_page_preview=False)

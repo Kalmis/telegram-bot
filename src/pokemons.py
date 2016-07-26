@@ -519,5 +519,5 @@ class pokemon(object):
         if pokemonNumber < 0:
             returnText += "Ei päivän pokemonia vielä!"
         else:
-            returnText += "{!s} ({!s})\n http://temme.dy.fi/tj/pokemonit/{!s}.jpg".format(pokemons[pokemonNumber], pokemonNumber, pokemons[pokemonNumber])
+            returnText += "{!s} ({!s})\n http://temme.dy.fi/tj/pokemonit/{!s}.jpg".format(pokemons[pokemonNumber], TJ, pokemons[pokemonNumber])
         return returnText
