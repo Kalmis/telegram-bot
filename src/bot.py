@@ -12,6 +12,7 @@ import requests
 import datetime
 from furl import furl  # For manipulating sodexo urls
 from menuparser import menuParser
+from pokemons import pokemon
 import configparser
 #import pprint
 import feedparser
@@ -130,6 +131,7 @@ class YourBot(telepot.Bot):
 
         if command == 'help':
             reply = ""
+            reply += "/pokemon Päivän pokemon!"
             reply += "/time Local time of given location (address, city etc.)\n"
             reply += "Menu of restaurant:\n"
             restaurants = list(self.amicaMenus) + list(self.sodexoMenus) + \
@@ -180,4 +182,8 @@ class YourBot(telepot.Bot):
                 reply = "Anna sijainti"
             else:
                 reply = self.getLocalTimeForLocationName(' '.join(query[1:]))
+            self.sendMessage(chat_id, reply, reply_to_message_id=msg_id)
+
+        elif command == 'pokemon':
+            reply = pokemon.getTodaysPokemon()
             self.sendMessage(chat_id, reply, reply_to_message_id=msg_id)
