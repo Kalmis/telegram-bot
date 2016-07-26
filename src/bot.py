@@ -131,7 +131,7 @@ class YourBot(telepot.Bot):
 
         if command == 'help':
             reply = ""
-            reply += "/pokemon Päivän pokemon!"
+            reply += "/pokemon Päivän pokemon!\n"
             reply += "/time Local time of given location (address, city etc.)\n"
             reply += "Menu of restaurant:\n"
             restaurants = list(self.amicaMenus) + list(self.sodexoMenus) + \

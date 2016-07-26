@@ -510,7 +510,7 @@ pokemons = [
 class pokemon(object):
 
     @staticmethod
-    def getTodaysPokemon(self):
+    def getTodaysPokemon():
         returnText = ""
         today = datetime.datetime.now()
         TJ = endDate-today
