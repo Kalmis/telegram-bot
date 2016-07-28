@@ -8,8 +8,7 @@ Created on 27.7.2016
 
 import datetime
 
-
-endDate = datetime.datetime.strptime("2016-12-15 07:00", "%Y-%m-%d %H:%M")
+endDate = datetime.datetime.strptime("2016-12-15 07:00 +0300", "%Y-%m-%d %H:%M %z")
 
 pokemons = [
         "Ivysaur",
@@ -512,7 +511,7 @@ class pokemon(object):
     @staticmethod
     def getTodaysPokemon():
         returnText = ""
-        today = datetime.datetime.now()
+        today = datetime.datetime.now(pytz.timezone("Europe/Helsinki"))
         TJ = endDate-today
         TJ = TJ.days + 1
         pokemonNumber = TJ - 2
