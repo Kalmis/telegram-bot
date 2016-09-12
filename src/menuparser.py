@@ -40,16 +40,15 @@ class menuParser(object):
         names = []
         MenuForDay = menuParser.getAmicaMenuForDay(dict, date)
         for SetMenu in MenuForDay['SetMenus']:
-            if SetMenu['Name'] is not None:
-                names.append(SetMenu['Name'])
-            else:
-                names.append("Dunno")
+            names.append(SetMenu['Name'])
         return names
 
     @staticmethod
     def getAmicaSetMenu(MenuForDay, menuName):
         '''Get food of given menu'''
         for SetMenu in MenuForDay['SetMenus']:
+            if SetMenu['Name'] is None or menuName is None:
+                return SetMenu
             if SetMenu['Name'].lower() == menuName.lower():
                 return SetMenu
         return {'Components': ""}
