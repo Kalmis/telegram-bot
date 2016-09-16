@@ -7,6 +7,7 @@ Created on 27.7.2016
 '''
 
 import datetime
+import pytz
 
 endDate = datetime.datetime.strptime("2016-12-15 07:00 +0300", "%Y-%m-%d %H:%M %z")
 
