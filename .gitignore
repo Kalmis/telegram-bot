@@ -1,10 +1,10 @@
 *.pyc
-src/token.conf
+tokens.conf
 *.json
 *.html
 .DS_STORE
 *_dict
 .project
 .settings
-src/testing.py
+testing.py
 .pydevproject
