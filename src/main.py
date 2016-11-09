@@ -44,6 +44,7 @@ class Main(object):
         self.bot.downloadTaffaMenu()
         self.bot.downloadAmicaMenus()
         self.bot.downloadHYYMenus()
+        self.bot.readSubwayMenu()
 
 if __name__ == '__main__':
     Main()

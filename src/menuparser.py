@@ -123,3 +123,11 @@ class menuParser(object):
         if (len(dict.entries) == 7):
             returnText += dict.entries[weekDayNumber]['summary_detail']['value']
         return returnText
+
+    @staticmethod
+    def getSubwaySubOfTheDay(dict, date):
+        '''Get sub of the given date'''
+        weekDayNumber = str(date.isoweekday())
+        returnText = "{!s}".format(dict[weekDayNumber])
+        return returnText
+

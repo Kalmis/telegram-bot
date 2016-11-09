@@ -18,6 +18,7 @@ import configparser
 import feedparser
 import geopy
 import pytz
+import json
 
 
 class YourBot(telepot.Bot):
@@ -36,6 +37,18 @@ class YourBot(telepot.Bot):
     def initGeopyGoogle(self, TOKEN):
         self.GOOGLETOKEN = TOKEN
         self.geopyGoogle = geopy.geocoders.GoogleV3(self.GOOGLETOKEN, "maps.google.fi")
+
+    def readSubwayMenu(self):
+        categoryName = "SUBWAY"
+        self.subwayMenu = {}
+        for option in self.config.options(categoryName):
+            fileName = self.config.get(categoryName, option)
+            try:
+                data_file = open(fileName)
+                self.subwayMenu[option] = json.load(data_file)
+            except Exception as e:
+                print("Reading subway file was not succesfull.")
+                print(e)
 
     def downloadAmicaMenus(self):
         '''Downloads amica menus that are set in config under [AMICA], decodes JSON to
@@ -135,7 +148,7 @@ class YourBot(telepot.Bot):
             reply += "/time Local time of given location (address, city etc.)\n"
             reply += "Menu of restaurant:\n"
             restaurants = list(self.amicaMenus) + list(self.sodexoMenus) + \
-                list(self.taffaMenu) + list(self.HYYMenus)
+                list(self.taffaMenu) + list(self.HYYMenus) + list(self.subwayMenu)
             restaurants.sort()
             for restaurant in restaurants:
                 reply += "/{!s}\n".format(restaurant)
@@ -176,6 +189,13 @@ class YourBot(telepot.Bot):
             else:
                 reply = "Ei listaa tälle päivälle"
             self.sendMessage(chat_id, reply, reply_to_message_id=msg_id)
+
+        elif command in self.subwayMenu:
+            today = datetime.datetime.now()
+            fullMenu = menuParser.getSubwaySubOfTheDay(self.subwayMenu[command], today)
+            reply = "{!s}\n {!s}".format(today.strftime("%A"), fullMenu)
+            self.sendMessage(chat_id, reply, reply_to_message_id=msg_id)
+
 
         elif command == 'time':
             if len(query) < 2:
