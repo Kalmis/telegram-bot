@@ -99,17 +99,25 @@ class menuParser(object):
         temp = {"class": "todays-menu"}
         todays_menu = soup.find(attrs=temp)
 
-        date = parse(todays_menu.p.contents[0].split()[-1])
-        meta = {"requested_timestamp": str(date.timestamp())}
-        courses = []
-        for li in todays_menu.ul.children:
-            if li.name == "li":
-                # The page's encoding isn't utf-8 after all...
-                content = str(li.contents[0]).encode('latin-1').decode('utf-8')
-                temp = {"title_fi": content}
-                courses.append(temp)
-        menu['courses'] = courses
-        menu['meta'] = meta
+        if todays_menu is not None:
+            date = parse(todays_menu.p.contents[0].split()[-1])
+            meta = {"requested_timestamp": str(date.timestamp())}
+            courses = []
+            for li in todays_menu.ul.children:
+                if li.name == "li":
+                    # The page's encoding isn't utf-8 after all...
+                    content = str(li.contents[0]).encode('latin-1').decode('utf-8')
+                    temp = {"title_fi": content}
+                    courses.append(temp)
+            menu['courses'] = courses
+            menu['meta'] = meta
+        else:
+            courses = [{"title_fi": "No menu found"}]
+            meta = {"requested_timestamp": str(datetime.now().timestamp())}
+
+            menu['courses'] = courses
+            menu['meta'] = meta
+
         return menu
 
     @staticmethod
