@@ -138,4 +138,3 @@ class menuParser(object):
         weekDayNumber = str(date.isoweekday())
         returnText = "{!s}".format(dict[weekDayNumber])
         return returnText
-

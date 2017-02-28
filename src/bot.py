@@ -14,7 +14,6 @@ from furl import furl  # For manipulating sodexo urls
 from menuparser import menuParser
 from pokemons import pokemon
 import configparser
-#import pprint
 import feedparser
 import geopy
 import pytz
@@ -195,7 +194,6 @@ class YourBot(telepot.Bot):
             fullMenu = menuParser.getSubwaySubOfTheDay(self.subwayMenu[command], today)
             reply = "{!s}\n {!s}".format(today.strftime("%A"), fullMenu)
             self.sendMessage(chat_id, reply, reply_to_message_id=msg_id)
-
 
         elif command == 'time':
             if len(query) < 2:
