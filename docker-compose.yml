@@ -6,5 +6,4 @@ services:
     volumes:
       - ./src:/app
       - ./docs:/docs
-    environment:
-      - TELEGRAM_TOKEN
+    env_file: .env
