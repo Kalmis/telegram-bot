@@ -8,3 +8,5 @@ tokens.conf
 .settings
 testing.py
 .pydevproject
+telegEnv
+.env

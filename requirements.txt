@@ -1,9 +1,1 @@
-telepot>=8.1
-schedule>=0.3.2
-furl>=0.4.95
-requests>=2.10.0
-beautifulsoup4>=4.4.1
-feedparser>=5.2.1
-geopy>=1.11.0
-python-dateutil>=1.5
-pytz>=2013.7
+python-telegram-bot

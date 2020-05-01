@@ -1,0 +1,10 @@
+version: "3"
+services:
+
+  telegram-bot:
+    build: .
+    volumes:
+      - ./src:/app
+      - ./docs:/docs
+    environment:
+      - TELEGRAM_TOKEN
