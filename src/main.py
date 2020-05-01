@@ -1,40 +1,46 @@
 import os
 import logging
-import glob
-import random
 from telegram.ext import Updater, CommandHandler
+from google_photos import GooglePhotosAlbum, PhotoUrlsIsEmptyError
 
-
-IMAGES_PATH = '/docs/images/'
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logging.getLogger("telegram").setLevel(logging.WARNING)
-logger = logging.getLogger('telegram-bot.' + __name__)
+logger = logging.getLogger('telegram-bot')
 logger.setLevel(logging.INFO)
 
 API_TOKEN = os.getenv('TELEGRAM_TOKEN')
+GOOGLE_PHOTOS_ALBUM_URL = os.getenv('GOOGLE_PHOTOS_ALBUM_URL')
+kusti_album = GooglePhotosAlbum(GOOGLE_PHOTOS_ALBUM_URL)
+
 
 def start(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
+    update.message.reply_text(text="I'm KalmisBot, nice to meet you!")
 
 
-def random_photo(update, context):
+def random_photo_of_kusti(update, context):
+    try:
+        photo_url = kusti_album.random_photo_url()
+        update.message.reply_photo(photo=photo_url,
+                                   caption='Here you go!')
+    except PhotoUrlsIsEmptyError:
+        update.message.reply_text(text="Photos are currently unavailable :(")
 
-    photos = []
-    for extension in ['*.JPG', '*.JPEG']:
-        photos += glob.glob(IMAGES_PATH + extension)
-    photo = random.choice(photos)
-    context.bot.send_photo(chat_id=update.effective_chat.id, photo=open(photo, 'rb'))
 
-
-if __name__ == "__main__":
+def main():
     logger.info("Starting")
     updater = Updater(token=API_TOKEN, use_context=True)
     dispatcher = updater.dispatcher
-    start_handler = CommandHandler('start', start)
-    kusti_handler = CommandHandler('kusti', random_photo)
-    dispatcher.add_handler(start_handler)
-    dispatcher.add_handler(kusti_handler)
+
+    logger.info("Adding handlers")
+    dispatcher.add_handler(CommandHandler('start', start))
+    dispatcher.add_handler(CommandHandler('kusti', random_photo_of_kusti))
+
     logger.info("Starting polling")
     updater.start_polling()
+    updater.idle()
+
+
+if __name__ == "__main__":
+    main()
