@@ -7,16 +7,25 @@ from datetime import datetime
 logger = logging.getLogger('telegram-bot.' + __name__)
 
 
-class Error(Exception):
+class GooglePhotosAlbumError(Exception):
     """Base class for exceptions in this module."""
     pass
 
 
-class PhotoUrlsIsEmptyError(Error):
+class PhotoUrlsIsEmptyError(GooglePhotosAlbumError):
     pass
 
 
 class GooglePhotosAlbum():
+
+    """Represents a public (or shared through a url) google photos album. Implements
+    functions for fetching photos
+
+    Attributes:
+        album_url (str): Full url to public or accessible via link google photos album
+        cache_ttl (int): Cache time-to-live in seconds
+        downloaded_at (datetime): When information was fetched the last time
+    """
 
     def __init__(self, album_url, cache_ttl=60*15):
         self.cache_ttl = cache_ttl
@@ -40,7 +49,7 @@ class GooglePhotosAlbum():
         try:
             return random.choice(self.photo_urls)
         except IndexError:
-            raise NoPhotoUrlsFoundError
+            raise PhotoUrlsIsEmptyError
 
     def _download_photo_urls(self):
         link_regex = r"(https:\/\/lh3\.googleusercontent\.com\/[a-zA-Z0-9\-_]{128,})"
