@@ -28,7 +28,7 @@ class GooglePhotosAlbum():
     @property
     def photo_urls(self):
         if (datetime.now() - self.downloaded_at).total_seconds() > self.cache_ttl:
-            self._photo_urls = self._download_photo_urls()
+            self._download_photo_urls()
         return self._photo_urls
 
     def random_photo_url(self):
