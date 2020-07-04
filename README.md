@@ -3,7 +3,5 @@ A Telegram bot which at the moment can tell the menu of different student restau
 
 #Requirements
 
-Python 3
-For modules, see requirements.txt
+source telegram-bot/bin/activate
 
-You'll also need a Telegram bot token and Google maps API token which will shall be put into src/tokens.conf

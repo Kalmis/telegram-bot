@@ -14,9 +14,10 @@ logger.setLevel(logging.INFO)
 
 API_TOKEN = os.getenv('TELEGRAM_TOKEN')
 GOOGLE_PHOTOS_ALBUM_URL = os.getenv('GOOGLE_PHOTOS_ALBUM_URL')
+DESIRE_PATH_API_URL = os.getenv('DESIRE_PATH_API_URL')
 DESIRE_PATH_URL = os.getenv('DESIRE_PATH_URL')
 kusti_album = GooglePhotosAlbum(GOOGLE_PHOTOS_ALBUM_URL)
-desire_path = DesirePathApi(DESIRE_PATH_URL)
+desire_path = DesirePathApi(DESIRE_PATH_API_URL)
 
 
 def start(update, context):
@@ -42,7 +43,8 @@ def info_of_oikotie_listing(update, context):
         price_info = f"Myyntihinta: {price['Myyntihinta']} (Velaton: {price['Velaton hinta']})\n"
         lv_cost = data['Asuinkustannukset']
         lv_cost_info = f"Hoitovastike: {lv_cost['Hoitovastike']}, Rahoitusvastike: {lv_cost['Rahoitusvastike']}, Yhtiövastike: {lv_cost['Yhtiövastike']}\n"
-        text = basic_info + price_info + lv_cost_info
+        desire_path_analytics_url = f"{DESIRE_PATH_URL}/{url}\n"
+        text = basic_info + price_info + lv_cost_info + desire_path_analytics_url
         update.message.reply_text(text=text)
     except DesirePathError as e:
         update.message.reply_text(text="Fetching oikotie info failed")
