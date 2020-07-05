@@ -33,16 +33,52 @@ def random_photo_of_kusti(update, context):
         update.message.reply_text(text="Photos are currently unavailable :(")
 
 
+def _return_value_from_path_or_none(data, path):
+    element_value = data
+    try:
+        for element_name in path:
+            element_value = element_value[element_name]
+        return element_value
+    except KeyError:
+        print(f"Path not found {path}")
+        return None
+
+
+def _return_price_as_text(data, path, decimals=True):
+    price = _return_value_from_path_or_none(data, path + ['value'])
+    currency = _return_value_from_path_or_none(data, path + ['currency'])
+    period = _return_value_from_path_or_none(data, path + ['period'])
+    currency = "€" if currency == "EUR" else currency
+
+    if decimals:
+        if period is not None:
+            return f"{price:.2f} {currency}/{period}"
+        else:
+            return f"{price:.2f} {currency}"
+    else:
+        if period is not None:
+            return f"{price:.0f} {currency}/{period}"
+        else:
+            return f"{price:.0f} {currency}"
+
+
 def info_of_oikotie_listing(update, context):
     url = context.args[0]
     try:
         data = desire_path.listing_info_from_url(url)
-        basic = data['Perustiedot']
-        basic_info = f"{basic['Sijainti'].split(',')[1]}, {basic['Asuinpinta-ala']}, {basic['Huoneiston kokoonpano']}\n"
-        price = data['Hinta']
-        price_info = f"Myyntihinta: {price['Myyntihinta']} (Velaton: {price['Velaton hinta']})\n"
-        lv_cost = data['Asuinkustannukset']
-        lv_cost_info = f"Hoitovastike: {lv_cost['Hoitovastike']}, Rahoitusvastike: {lv_cost['Rahoitusvastike']}, Yhtiövastike: {lv_cost['Yhtiövastike']}\n"
+        address = _return_value_from_path_or_none(data, ['location', 'fullAddress'])
+        address = address.split(',')[0] if address is not None else address
+        size = _return_value_from_path_or_none(data, ['basicData', 'size', 'total', 'value'])
+        room_configuration = _return_value_from_path_or_none(data, ['basicData', 'roomConfiguration'])
+        price = _return_price_as_text(data, ['price', 'sales'], decimals=False)
+        free_of_debt_price = _return_price_as_text(data, ['price', 'freeOfDebt'], decimals=False)
+        price_per_sqm = _return_price_as_text(data, ['price', 'perSquareMeter'])
+        condominium_charge = _return_price_as_text(data, ['charges', 'condominium'])
+        financing_charge = _return_price_as_text(data, ['charges', 'financialCosts'])
+
+        basic_info = f"{address}, {size} m2 ({room_configuration})\n"
+        price_info = f"Myyntihinta: {price} ({free_of_debt_price}), {price_per_sqm}/m2\n"
+        lv_cost_info = f"Hoitovastike: {condominium_charge}, Rahoitusvastike: {financing_charge}\n"
         desire_path_analytics_url = f"{DESIRE_PATH_URL}/{url}\n"
         text = basic_info + price_info + lv_cost_info + desire_path_analytics_url
         update.message.reply_text(text=text)
