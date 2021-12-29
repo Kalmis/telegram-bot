@@ -13,10 +13,12 @@ logger = logging.getLogger('telegram-bot')
 logger.setLevel(logging.INFO)
 
 API_TOKEN = os.getenv('TELEGRAM_TOKEN')
-GOOGLE_PHOTOS_ALBUM_URL = os.getenv('GOOGLE_PHOTOS_ALBUM_URL')
+GOOGLE_PHOTOS_ALBUM_URL_KUSTI = os.getenv('GOOGLE_PHOTOS_ALBUM_URL_KUSTI')
+GOOGLE_PHOTOS_ALBUM_URL_BIZ = os.getenv('GOOGLE_PHOTOS_ALBUM_URL_BIZ')
 DESIRE_PATH_API_URL = os.getenv('DESIRE_PATH_API_URL')
 DESIRE_PATH_URL = os.getenv('DESIRE_PATH_URL')
-kusti_album = GooglePhotosAlbum(GOOGLE_PHOTOS_ALBUM_URL)
+kusti_album = GooglePhotosAlbum(GOOGLE_PHOTOS_ALBUM_URL_KUSTI)
+biz_album = GooglePhotosAlbum(GOOGLE_PHOTOS_ALBUM_URL_BIZ)
 desire_path = DesirePathApi(DESIRE_PATH_API_URL)
 
 
@@ -29,6 +31,14 @@ def random_photo_of_kusti(update, context):
         photo_url = kusti_album.random_photo_url()
         update.message.reply_photo(photo=photo_url,
                                    caption='Here you go!')
+    except PhotoUrlsIsEmptyError:
+        update.message.reply_text(text="Photos are currently unavailable :(")
+
+def random_photo_of_biz(update, context):
+    try:
+        photo_url = biz_album.random_photo_url()
+        update.message.reply_photo(photo=photo_url,
+                                   caption='han se on!')
     except PhotoUrlsIsEmptyError:
         update.message.reply_text(text="Photos are currently unavailable :(")
 
@@ -94,6 +104,7 @@ def main():
     logger.info("Adding handlers")
     dispatcher.add_handler(CommandHandler('start', start))
     dispatcher.add_handler(CommandHandler('kusti', random_photo_of_kusti))
+    dispatcher.add_handler(CommandHandler('meno', random_photo_of_biz))
     dispatcher.add_handler(CommandHandler('oikotie', info_of_oikotie_listing))
 
     logger.info("Starting polling")
