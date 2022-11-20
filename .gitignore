@@ -10,4 +10,5 @@ testing.py
 .pydevproject
 telegEnv
 .env
-telegram-bot/
+
+venv

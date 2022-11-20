@@ -1,0 +1,24 @@
+pre-commit
+black==22.10.0
+# Flake8 plugins
+flake8<5
+flake8-bugbear
+flake8-builtins
+flake8-comprehensions
+flake8-eradicate
+flake8-fixme
+flake8-jira-todo-checker 
+flake8-print
+flake8-simplify
+flake8-todos
+flake8-variables-names
+flake8-functions
+flake8-use-fstring
+flake8-expression-complexity
+flake8-cognitive-complexity
+flake8-import-order-spoqa
+flake8-type-checking
+flake8-bandit
+flake8-pytest
+pep8-naming
+dlint

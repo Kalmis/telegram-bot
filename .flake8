@@ -1,0 +1,69 @@
+[flake8]
+
+# Black line length
+max-line-length = 100
+# Code complexity, see https://en.wikipedia.org/wiki/Cyclomatic_complexity
+max-complexity = 12
+
+extend-ignore = 
+    # Allow missing line at the end-of-file while black is not used for all files
+    W292
+    # Black contradicts sometimes, see https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html
+    E203
+    # Use B950 instead (not so strict max-line-length)
+    E501
+    # Tries to enforce use of contextlib.suppress over try-except
+    SIM105
+    # Any, all.. Why not map and apply and...
+    SIM110
+    SIM111
+    # No need for link as we use jira-link
+    T003
+    # No need to use import x / from .. import for std/3rd party libs
+    I901
+    I902
+    # Using assert is just fine
+    S101
+    # TODOs are fine
+    T101
+    # Type_checking block just creates harm
+    TC002
+    # Set() vs. {} compherension
+    C403
+extend-select = 
+    # Enable opinionated bugbear stuff
+    B901
+    B902
+    B903
+    B950
+    # Warn about possible missing f in strings
+    FS003
+
+import-order-style = spoqa
+type-checking-pydantic-enabled = true
+type-checking-exempt-modules = typing, typing_extensions
+jira-project-ids = KAIKU
+
+per-file-ignores = 
+    # Ignore imported but not used in init files, and * imports
+    */__init__.py:F401,F403
+    # Ignore long lines in the analytics scripts
+    */snowflake_sql_generator.py:E501 
+    */tracker_events.py:E501
+    */test_snowflake_sql_generator_functional.py:E501
+    # Allow print
+    */*_cli.py:T201
+# Exclude based on flake8 defaults
+exclude =
+    # No need to traverse our git directory
+    .git,
+    # There's no value in checking cache directories
+    __pycache__,
+    # Wiki files
+    wiki,
+    # Virtual envs
+    venv,
+    env,
+    # Other scripts etc.
+    local_*,
+    exports
