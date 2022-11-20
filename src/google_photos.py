@@ -61,6 +61,5 @@ class GooglePhotosAlbum:
             photo_urls = re.findall(link_regex, r.text)
             photo_urls_without_album_covers = photo_urls[1:-1]
             self._photo_urls = photo_urls_without_album_covers
-        except Exception:
-            # FIXME: Never catch all exceptions...
+        except requests.HTTPError:
             logger.exception("Fetching google photos urls")
