@@ -1,14 +1,14 @@
 import requests
 import logging
 
-logger = logging.getLogger('telegram-bot.' + __name__)
+logger = logging.getLogger("telegram-bot." + __name__)
 
 
 class DesirePathError(Exception):
     pass
 
 
-class DesirePathApi():
+class DesirePathApi:
 
     """Implements functions for fetching information from Desire path
 
@@ -36,8 +36,8 @@ class DesirePathApi():
             r = requests.get(full_url, timeout=20)
             r.raise_for_status()
             data = r.json()
-            if 'error' in data:
-                logger.error(data['error'])
+            if "error" in data:
+                logger.error(data["error"])
                 raise DesirePathError
             return data
         except Exception as e:

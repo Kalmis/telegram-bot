@@ -4,11 +4,12 @@ import re
 import random
 from datetime import datetime
 
-logger = logging.getLogger('telegram-bot.' + __name__)
+logger = logging.getLogger("telegram-bot." + __name__)
 
 
 class GooglePhotosAlbumError(Exception):
     """Base class for exceptions in this module."""
+
     pass
 
 
@@ -16,7 +17,7 @@ class PhotoUrlsIsEmptyError(GooglePhotosAlbumError):
     pass
 
 
-class GooglePhotosAlbum():
+class GooglePhotosAlbum:
 
     """Represents a public (or shared through a url) google photos album. Implements
     functions for fetching photos
@@ -27,7 +28,7 @@ class GooglePhotosAlbum():
         downloaded_at (datetime): When information was fetched the last time
     """
 
-    def __init__(self, album_url, cache_ttl=60*15):
+    def __init__(self, album_url, cache_ttl=60 * 15):
         self.cache_ttl = cache_ttl
         self.downloaded_at = None
         self.album_url = album_url
@@ -60,5 +61,6 @@ class GooglePhotosAlbum():
             photo_urls = re.findall(link_regex, r.text)
             photo_urls_without_album_covers = photo_urls[1:-1]
             self._photo_urls = photo_urls_without_album_covers
-        except Exception as e:
+        except Exception:
+            # FIXME: Never catch all exceptions...
             logger.exception("Fetching google photos urls")
