@@ -13,7 +13,8 @@ logging.getLogger("telegram").setLevel(logging.WARNING)
 logger = logging.getLogger("telegram-bot")
 logger.setLevel(logging.INFO)
 
-API_TOKEN = os.getenv("TELEGRAM_TOKEN")
+BOT_TOKEN = os.getenv("TELEGRAM_TOKEN")
+SERVER_URL = os.getenv("SERVER_URL")
 GOOGLE_PHOTOS_ALBUM_URL_KUSTI = os.getenv("GOOGLE_PHOTOS_ALBUM_URL_KUSTI")
 GOOGLE_PHOTOS_ALBUM_URL_BIZ = os.getenv("GOOGLE_PHOTOS_ALBUM_URL_BIZ")
 DESIRE_PATH_API_URL = os.getenv("DESIRE_PATH_API_URL")
@@ -100,7 +101,7 @@ def info_of_oikotie_listing(update, context):
 
 def main():
     logger.info("Starting")
-    updater = Updater(token=API_TOKEN, use_context=True)
+    updater = Updater(token=BOT_TOKEN, use_context=True)
     dispatcher = updater.dispatcher
 
     logger.info("Adding handlers")
@@ -110,7 +111,8 @@ def main():
     dispatcher.add_handler(CommandHandler("oikotie", info_of_oikotie_listing))
 
     logger.info("Starting polling")
-    updater.start_polling()
+    updater.start_webhook(listen="0.0.0.0", port=80, url_path=BOT_TOKEN)
+    updater.bot.set_webhook(url=f"{SERVER_URL}/{BOT_TOKEN}")
     updater.idle()
 
 
