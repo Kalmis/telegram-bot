@@ -1,6 +1,5 @@
 *.pyc
 tokens.conf
-*.json
 *.html
 .DS_STORE
 *_dict
@@ -10,5 +9,6 @@ testing.py
 .pydevproject
 telegEnv
 .env
+dev.env
 
 venv
